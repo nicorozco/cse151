@@ -1,0 +1,24 @@
+vlan 10 
+name Engineering
+vlan 20
+name  QA-Engineering
+vlan 30 
+name Sales
+vlan 40 
+name Marketing
+vlan 101 
+name Voice-1
+vlan 102 
+name Voice-2
+vlan 121
+name Guest-1
+vlan 122 
+Name Guest-2 
+vlan 180 
+name Management
+vlan 254 
+name Native
+vlan 255
+name Parking-Lot 
+
+

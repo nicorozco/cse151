@@ -1,0 +1,19 @@
+enable 
+conf t
+hostname access-1-4
+no ip domain-lookup
+enable secret class
+username admin secret sshadmin
+ip domain-name SSH-KEY.com
+line con 0
+exec-timeout 0 0
+logging synchronous
+password cisco
+login
+exit
+line vty 0 15
+login local
+transport input ssh
+exit
+end
+copy running-config startup-config
