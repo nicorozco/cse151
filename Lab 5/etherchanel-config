@@ -1,0 +1,13 @@
+port-chanel load-balance src-dst-ip
+inter range fa 0/1-2
+shutdown
+channel-protocol lacp
+channel-group 1 mode active
+no shutdown 
+end 
+copy run start 
+
+interface po1
+switchport trunk allowed vlan 1,10,20,30,40,101-102,121-122,180,254
+end
+copy run start 

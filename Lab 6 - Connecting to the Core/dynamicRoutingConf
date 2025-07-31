@@ -1,0 +1,40 @@
+router ospf 1
+router-id 1.0.0.0
+auto-cost reference-bandwidth 10000
+network 10.0.0.0 0.255.255.255 area 0
+exit
+interface gig 1/0/11
+ip ospf network point-to-point
+exit 
+interface gig 1/0/11
+ip ospf network point-to-point
+exit 
+interface gig 1/0/23
+ip ospf network point-to-point
+exit 
+interface gig 1/0/24
+ip ospf network point-to-point
+exit 
+end
+clear ip ospf process
+
+router ospf 1
+router-id 2.0.0.0
+auto-cost reference-bandwidth 10000
+network 10.0.0.0 0.255.255.255 area 0
+exit
+interface gig 1/0/11
+ip ospf network point-to-point
+exit 
+interface gig 1/0/11
+ip ospf network point-to-point
+exit 
+interface gig 1/0/23
+ip ospf network point-to-point
+exit 
+interface gig 1/0/24
+ip ospf network point-to-point
+exit 
+end
+clear ip ospf process
+

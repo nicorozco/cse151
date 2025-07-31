@@ -1,0 +1,343 @@
+Configurations for OSPF:
+
+Router Configurations:
+Edge:
+interface gig 0/0/0
+ip address 10.200.200.25 255.255.255.252
+no shutdown
+exit
+
+interface gig 0/0/1
+ip address 209.1.1.1 255.255.255.252
+no shutdown
+exit
+
+ISP Router:
+
+interface gig 0/0/1
+ip address 209.1.1.2 255.255.255.252
+no shutdown
+exit
+
+interface Loopback0
+ip address 99.99.99.99 255.255.255.0
+no shutdown
+exit
+
+Core 1 (Layer 3 Switch):
+
+interface g1/0/1
+no switchport
+ip add 10.200.200.1 255.255.255.252
+exit
+
+interface g1/0/3
+no switchport
+ip add 10.200.200.9 255.255.255.252
+exit
+
+interface g1/0/6
+no switchport
+ip add 10.200.200.17 255.255.255.252
+exit
+
+interface g1/0/24
+no switchport
+ip add 10.1.1.1 255.255.255.0
+exit
+
+interface g1/0/23
+no switchport
+ip add 10.200.200.26 255.255.255.252
+exit
+
+____Core 2 (Layer 3 Switch)_______
+
+interface g1/0/3
+no switchport
+ip add 10.200.200.10 255.255.255.252
+exit
+
+interface g1/0/4
+no switchport
+ip add 10.200.200.13 255.255.255.252
+exit
+
+interface g1/0/5
+no switchport
+ip add 10.200.200.22 255.255.255.252
+exit
+
+interface g1/0/24
+no switchport
+ip add 10.2.1.1 255.255.255.0
+exit
+
+
+____Core 3 (Layer 3 Switch)_____
+
+interface g1/0/1
+no switchport
+ip add 10.200.200.2 255.255.255.252
+exit
+
+interface g1/0/2
+no switchport
+ip add 10.200.200.5 255.255.255.252
+exit
+
+interface g1/0/5
+no switchport
+ip add 10.200.200.21 255.255.255.252
+exit
+
+interface g1/0/24
+no switchport
+ip add 10.3.1.1 255.255.255.0
+exit
+
+____Core 4 (Layer 3 Switch)_____
+
+interface g1/0/2
+no switchport
+ip add 10.200.200.6 255.255.255.252
+exit
+
+interface g1/0/4
+no switchport
+ip add 10.200.200.14 255.255.255.252
+exit
+
+interface g1/0/6
+no switchport
+ip add 10.200.200.18 255.255.255.252
+exit
+
+interface g1/0/24
+no switchport
+ip add 10.51.1.1 255.255.255.0
+exit
+
+Enabling OSPF
+
+____Core 1_____
+ip routing
+router ospf 1
+router-id 1.1.1.1
+network 10.1.1.0 0.0.0.255 area 0
+network 10.200.200.24 0.0.0.3 area 0
+network 10.200.200.8 0.0.0.3 area 0
+network 10.200.200.16 0.0.0.3 area 0
+network 10.200.200.0 0.0.0.3 area 0
+end
+
+____ Core 2 _____ 
+ip routing
+router ospf 1
+router-id 2.2.2.2
+network 10.2.1.0 255.255.255.0 area 0
+network 10.200.200.8 255.255.255.252 area 0
+network 10.200.200.20 255.255.255.252 area 0
+network 10.200.200.12 255.255.255.252 area 0
+end
+___ Core 3 ____ 
+
+ip routing
+router ospf 1
+router-id 3.3.3.3
+network 10.3.1.1 0.0.0.0 area 0
+network 10.200.200.2 0.0.0.0 area 0
+network 10.200.200.5 0.0.0.0 area 0
+network 10.200.200.21 0.0.0.0 area 0
+end
+
+___ Core 4 ___
+ip routing
+router ospf 1
+router-id 4.4.4.4
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+### Distribution OSPF Configuration ####
+___ Distribution 1  _____
+ip routing
+router ospf 1
+router-id 1.0.0.1
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+____ Distribution 2 _____
+ip routing
+router ospf 1
+router-id 2.0.0.1
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+____ Distribution 3a _____
+ip routing
+router ospf 1
+router-id 3.0.0.1
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+____ Distribution 3b _____
+ip routing
+router ospf 1
+router-id 3.0.0.2
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+____ Distribution 51 _____
+
+ip routing
+router ospf 1
+router-id 4.0.0.1
+network 10.0.0.0 0.255.255.255 area 0
+exit
+
+-- Edge Router Configuration --
+Note: The edge router internal facing interfaces should be enable with IGP (OSPF) and outer facing ports will be enabled with iBGP
+router ospf 1
+router-id 10.10.10.10
+network 10.200.200.24 0.0.0.3 area 0
+end
+
+--- Static Route Configuration ---
+Edge Router:
+ip route 10.0.0.0 255.0.0.0 209.1.1.1
+end
+
+-- Static Discarding Route ---
+Edge Router:
+ip route 10.0.0.0 255.0.0.0 null0
+end
+
+-- Adjusting Auto-Cost Reference Bandwidth --
+# All MLS
+router ospf 1
+auto-cost reference-bandwidth 10000
+
+--- Modifying Dead Intervals ---
+#Core 1 & Core 2:
+interface g/1/0/3
+ip ospf hello-interval 5
+ip ospf dead-interval 20
+
+--- Modifying Network Type as Point-to-Point ---
+#Edge 
+interface gig 0/0/0
+ip ospf network point-to-point
+exit
+
+#Core 1: 
+
+interface g1/0/1
+ip ospf network point-to-point
+exit
+
+interface g1/0/3
+ip ospf network point-to-point
+exit
+
+interface g1/0/6
+ip ospf network point-to-point
+exit
+
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+interface g1/0/23
+ip ospf network point-to-point
+exit
+
+#Core 2: 
+
+interface g1/0/3
+ip ospf network point-to-point
+exit
+
+interface g1/0/4
+ip ospf network point-to-point
+exit
+
+interface g1/0/5
+ip ospf network point-to-point
+exit
+
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+##Core 3##: 
+
+interface g1/0/1
+ip ospf network point-to-point
+exit
+
+interface g1/0/2
+ip ospf network point-to-point
+exit
+
+interface g1/0/5
+ip ospf network point-to-point
+exit
+
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+
+##Core 4##: 
+
+interface g1/0/2
+ip ospf network point-to-point
+exit
+
+interface g1/0/4
+ip ospf network point-to-point
+exit
+
+interface g1/0/6
+ip ospf network point-to-point
+exit
+
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+##Distribution 1 & 2 & 51 ##
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+## Distribution 3a ## 
+interface g1/0/3
+ip ospf network point-to-point
+exit
+
+interface g1/0/24
+ip ospf network point-to-point
+exit
+
+## Distribution 3b ## 
+interface g1/0/3
+ip ospf network point-to-point
+exit
+
+-- Configuring LANs as Passive Interfaces 
+D-1-2-51
+router ospf 1
+passive-interface gig 1/0/2
+passive-interface gig 1/0/3
+exit
+
+D-3a 
+router ospf 1
+passive-interface gig 1/0/2
+exit
+
+D-3b
+router ospf 1
+passive-interface gig 1/0/4
+exit

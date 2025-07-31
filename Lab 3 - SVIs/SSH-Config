@@ -1,0 +1,7 @@
+username admin secret sshadmin
+ip domain-name SSH-KEY.com
+crypto key generate rsa general-keys modulus 1024
+line vty 0 15
+login local
+transport input ssh
+exit
